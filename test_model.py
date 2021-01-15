@@ -2,7 +2,6 @@
 # Run the trained model on testing images #
 ###########################################
 
-# from scipy import misc
 import numpy as np
 import tensorflow as tf
 import imageio

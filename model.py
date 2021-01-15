@@ -12,61 +12,61 @@ def PUNET(input, instance_norm=False, instance_norm_level_1=False, num_maps_base
 
         # -----------------------------------------
         # Downsampling layers
-        conv_l1_d1 = _conv_multi_block(input, 3, num_maps=num_maps_base, instance_norm=False)              # 224 -> 224
-        pool1 = max_pool(conv_l1_d1, 2)                                                         # 224 -> 112
+        conv_l1_d1 = _conv_multi_block(input, 3, num_maps=num_maps_base, instance_norm=False)              # 128 -> 128
+        pool1 = max_pool(conv_l1_d1, 2)                                                         # 128 -> 64
 
-        conv_l2_d1 = _conv_multi_block(pool1, 3, num_maps=num_maps_base*2, instance_norm=instance_norm)      # 112 -> 112
-        pool2 = max_pool(conv_l2_d1, 2)                                                         # 112 -> 56
+        conv_l2_d1 = _conv_multi_block(pool1, 3, num_maps=num_maps_base*2, instance_norm=instance_norm)      # 64 -> 64
+        pool2 = max_pool(conv_l2_d1, 2)                                                         # 64 -> 32
 
-        conv_l3_d1 = _conv_multi_block(pool2, 3, num_maps=num_maps_base*4, instance_norm=instance_norm)     # 56 -> 56
-        pool3 = max_pool(conv_l3_d1, 2)                                                         # 56 -> 28
+        conv_l3_d1 = _conv_multi_block(pool2, 3, num_maps=num_maps_base*4, instance_norm=instance_norm)     # 32 -> 32
+        pool3 = max_pool(conv_l3_d1, 2)                                                         # 32 -> 16
 
-        conv_l4_d1 = _conv_multi_block(pool3, 3, num_maps=num_maps_base*8, instance_norm=instance_norm)     # 28 -> 28
-        pool4 = max_pool(conv_l4_d1, 2)                                                         # 28 -> 14
+        conv_l4_d1 = _conv_multi_block(pool3, 3, num_maps=num_maps_base*8, instance_norm=instance_norm)     # 16 -> 16
+        pool4 = max_pool(conv_l4_d1, 2)                                                         # 16 -> 8
 
         # -----------------------------------------
-        # Processing: Level 5,  Input size: 14 x 14
+        # Processing: Level 5,  Input size: 8 x 8
         conv_l5_d1 = _conv_multi_block(pool4, 3, num_maps=num_maps_base*16, instance_norm=instance_norm)
         conv_l5_d2 = _conv_multi_block(conv_l5_d1, 3, num_maps=num_maps_base*16, instance_norm=instance_norm) + conv_l5_d1
         conv_l5_d3 = _conv_multi_block(conv_l5_d2, 3, num_maps=num_maps_base*16, instance_norm=instance_norm) + conv_l5_d2
         conv_l5_d4 = _conv_multi_block(conv_l5_d3, 3, num_maps=num_maps_base*16, instance_norm=instance_norm)
 
-        conv_t4b = _conv_tranpose_layer(conv_l5_d4, num_maps_base*8, 3, 2)      # 14 -> 28
+        conv_t4b = _conv_tranpose_layer(conv_l5_d4, num_maps_base*8, 3, 2)      # 8 -> 16
 
         # -----------------------------------------
-        # Processing: Level 4,  Input size: 28 x 28
+        # Processing: Level 4,  Input size: 16 x 16
         conv_l4_d6 = conv_l4_d1
         conv_l4_d7 = stack(conv_l4_d6, conv_t4b)
         conv_l4_d8 = _conv_multi_block(conv_l4_d7, 3, num_maps=num_maps_base*8, instance_norm=instance_norm)
 
-        conv_t3b = _conv_tranpose_layer(conv_l4_d8, num_maps_base*4, 3, 2)      # 28 -> 56
+        conv_t3b = _conv_tranpose_layer(conv_l4_d8, num_maps_base*4, 3, 2)      # 16 -> 32
 
         # -----------------------------------------
-        # Processing: Level 3,  Input size: 56 x 56
+        # Processing: Level 3,  Input size: 32 x 32
         conv_l3_d6 = conv_l3_d1
         conv_l3_d7 = stack(conv_l3_d6, conv_t3b)
         conv_l3_d8 = _conv_multi_block(conv_l3_d7, 3, num_maps=num_maps_base*4, instance_norm=instance_norm)
 
-        conv_t2b = _conv_tranpose_layer(conv_l3_d8, num_maps_base*2, 3, 2)       # 56 -> 112
+        conv_t2b = _conv_tranpose_layer(conv_l3_d8, num_maps_base*2, 3, 2)       # 32 -> 64
 
         # -------------------------------------------
-        # Processing: Level 2,  Input size: 112 x 112
+        # Processing: Level 2,  Input size: 64 x 64
         conv_l2_d7 = conv_l2_d1
         conv_l2_d8 = stack(_conv_multi_block(conv_l2_d7, 3, num_maps=num_maps_base*2, instance_norm=instance_norm), conv_t2b)
         conv_l2_d9 = _conv_multi_block(conv_l2_d8, 3, num_maps=num_maps_base*2, instance_norm=instance_norm)
 
-        conv_t1b = _conv_tranpose_layer(conv_l2_d9, num_maps_base, 3, 2)       # 112 -> 224
+        conv_t1b = _conv_tranpose_layer(conv_l2_d9, num_maps_base, 3, 2)       # 64 -> 128
 
         # -------------------------------------------
-        # Processing: Level 1,  Input size: 224 x 224
+        # Processing: Level 1,  Input size: 128 x 128
         conv_l1_d9 = conv_l1_d1
         conv_l1_d10 = stack(_conv_multi_block(conv_l1_d9, 3, num_maps=num_maps_base, instance_norm=False), conv_t1b)
         conv_l1_d11 = stack(conv_l1_d10, conv_l1_d1)
         conv_l1_d12 = _conv_multi_block(conv_l1_d11, 3, num_maps=num_maps_base, instance_norm=False)
 
         # ----------------------------------------------------------
-        # Processing: Level 0 (x2 upscaling),  Input size: 224 x 224
-        conv_l0 = _conv_tranpose_layer(conv_l1_d12, num_maps_base//4, 3, 2)        # 224 -> 448
+        # Processing: Level 0 (x2 upscaling),  Input size: 128 x 128
+        conv_l0 = _conv_tranpose_layer(conv_l1_d12, num_maps_base//4, 3, 2)        # 128 -> 256
         conv_l0_out = _conv_layer(conv_l0, 3, 3, 1, relu=False, instance_norm=False)
 
         output_l0 = tf.nn.tanh(conv_l0_out) * 0.58 + 0.5
