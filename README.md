@@ -12,8 +12,10 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Dataset and model preparation](#dataset-and-model-preparation)
-- [PUNET Architecture](#punet-architecture)
+- [PUNET architecture](#punet-architecture)
 - [Training](#training)
+  - [Start training](#start-training)
+  - [Resume training](#resume-training)
 - [Test/Inference](#testinference)
   - [Use the provided pre-trained model](#use-the-provided-pre-trained-model)
   - [Use the self-obtained model](#use-the-self-obtained-model)
@@ -67,6 +69,7 @@ PUNET is a UNet-like architecture modified from [PyNET](https://github.com/aiff2
 ---
 ### Training
 
+#### Start training
 To train the model, use the following command:
 
 ```bash
@@ -108,8 +111,7 @@ After training, the following files will be produced under `model_dir`:
 >```[arch]_iteration_[iter].ckpt.data```          &nbsp; - &nbsp; part of checkpoint data for the model `[arch]_iteration_[iter]` <br/>
 >```[arch]_iteration_[iter].ckpt.index```          &nbsp; - &nbsp; part of checkpoint data for the model `[arch]_iteration_[iter]` <br/>
 
-<br/>
-
+#### Resume training
 To resume training from `restore_iter`, use the command like follows:
 
 ```bash
@@ -339,8 +341,8 @@ Mediatek License: [Mediatek Apache License 2.0](LICENSE)
 ---
 ### Contact
 
-```
-Please contact Min-Hung Chen (mh.chen@mediatek.com) for more information
-```
+Please contact [**Min-Hung Chen**](https://scholar.google.com/citations?user=ovzuxi8AAAAJ) for more information. <br/>
+Email: mh.chen AT mediatek DOT com <br/>
+[<img align="center" src="webpage/logo_MTK.png" width="10%">](https://www.mediatek.com/)
 
 [[back]](#contents)
