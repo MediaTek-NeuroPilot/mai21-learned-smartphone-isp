@@ -126,7 +126,7 @@ CUDA_VISIBLE_DEVICES=0 python train_model.py \
 
 ---
 ### Test/Inference
-`test_model.py` runs a model on testing images with the height=`img_h` and width=`img_w`. Here we use `img_h=2976` and `img_w=3968` as the example. If `save=True`, the protobuf (frozen graph) that corresponds to the testing image resolution will also be produced.
+`test_model.py` runs a model on testing images with the height=`img_h` and width=`img_w`. Here we use `img_h=1088` and `img_w=1920` as the example. If `save=True`, the protobuf (frozen graph) that corresponds to the testing image resolution will also be produced.
 
 <br/>
 
@@ -158,11 +158,11 @@ Optional parameters (and default values):
 >```num_maps_base```: **```16```** &nbsp; - &nbsp; base channel number (e.g. 8, 16, 32, etc.) <br/>
 >```orig```: **```True```**, **```False```** &nbsp; - &nbsp; use the pre-trained model or not <br/>
 >```restore_iter```: **```None```** &nbsp; - &nbsp; iteration to restore (when not specified with self-train model, the last saved model will be loaded)<br/>
->```img_h```: **```2976```** &nbsp; - &nbsp; width of the testing images <br/>
->```img_w```: **```3968```** &nbsp; - &nbsp; height of the testing images <br/>
+>```img_h```: **```1088```** &nbsp; - &nbsp; width of the testing images <br/>
+>```img_w```: **```1920```** &nbsp; - &nbsp; height of the testing images <br/>
 >```use_gpu```: **```True```**,**```False```** &nbsp; - &nbsp; run the model on GPU or CPU <br/>
 >```save```: **```True```** &nbsp; - &nbsp; save the loaded check point and protobuf (frozed graph) again <br/>
->```test_image```: **```True```** &nbsp; - &nbsp; run the loaded model on the test images. Can set as **```False```** if you want to save models only. <br/>
+>```test_image```: **```True```** &nbsp; - &nbsp; run the loaded model on the test images. Can set as **```False```** if you only want to save models. <br/>
 
 </br>
 
@@ -172,19 +172,34 @@ Below we provide an example command used for testing the model:
 CUDA_VISIBLE_DEVICES=0 python test_model.py \
   test_dir=fujifilm_full_resolution/ model_dir=models/punet_MAI/ result_dir=results/full-resolution/ \
   arch=punet num_maps_base=16 orig=False restore_iter=98000 \
-  img_h=2976 img_w=3968 use_gpu=True save=True test_image=True
+  img_h=1088 img_w=1920 use_gpu=True save=True test_image=True
 ```
 
 After inference, the output images will be produced under `result_dir`.
 
 **[Optional]** If `save=True`, the following files will be produced under `model_dir`:
 >```[model_name].ckpt.meta```  &nbsp; - &nbsp; graph data for the model `model_name` <br/>
->```[model_name].pb```         &nbsp; - &nbsp; protobug (frozen graph) for the model `model_name` <br/>
+>```[model_name].pb```         &nbsp; - &nbsp; protobuf (frozen graph) for the model `model_name` <br/>
 >```[model_name]/```           &nbsp; - &nbsp; a folder containing [Tensorboard](https://www.tensorflow.org/tensorboard) data for the model `model_name` <br/>
 
 Notes: 
 1. to export protobuf (frozen graph), the **output node name** needs to be specified. In this sample code, we use `output_l0` for PUNET. If you use a different name, please modify the argument for the function `utils.export_pb` (Line #111 in `test_model.py`). You can also use [Tensorboard](https://www.tensorflow.org/tensorboard) to check the output node name.
-2. In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you may need to submit multiple models for different evaluation goals (e.g. quality and latency). In this case, please specify different `img_h` and `img_w` for different evaluation goals so that you can generate different models with different corresponding input resolution.
+2. In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you may need to use different models for different evaluation goals (e.g. quality and latency). In this case, please specify different `img_h` and `img_w` for different evaluation goals. <br/>
+    * *Example 1*: Only produce the RGB images from validation data (resolution: *256x256*) without saving the model:
+    ```bash
+    CUDA_VISIBLE_DEVICES=0 python test_model.py \
+      test_dir=mediatek_raw/ model_dir=models/punet_MAI/ result_dir=results/ \
+      arch=punet num_maps_base=16 orig=False restore_iter=98000 \
+      img_h=256 img_w=256 use_gpu=True save=False test_image=True
+    ``` 
+    * *Example 2*: Only produce the protobuf (e.g. resolution: *1088x1920*) to evaluate the latency without generating any output images:
+    ```bash
+    CUDA_VISIBLE_DEVICES=0 python test_model.py \
+      model_dir=models/punet_MAI/ \
+      arch=punet num_maps_base=16 orig=False restore_iter=98000 \
+      img_h=1088 img_w=1920 use_gpu=True save=True test_image=False
+    ```
+
 
 [[back]](#contents)
 </br>
@@ -225,7 +240,7 @@ The last step is converting the frozen graph to TFLite so that the evaluation se
 
 >```graph_def_file```: **```models/original/punet_pretrained.pb```**  &nbsp; - &nbsp; input protobuf file <br/>
 >```output_file```: **```models/original/punet_pretrained.tflite```** &nbsp; - &nbsp; output tflite file <br/>
->```input_shape```: **```1,1488,1984,4```**                           &nbsp; - &nbsp; the network input, which is after debayering/demosaicing. If the raw image shape is `(img_h, img_w, 1)`, `input_shape` should be `(img_h/2, img_w/2, 4)`. <br/>
+>```input_shape```: **```1,544,960,4```**                           &nbsp; - &nbsp; the network input, which is after debayering/demosaicing. If the raw image shape is `(img_h, img_w, 1)`, `input_shape` should be `(img_h/2, img_w/2, 4)`. <br/>
 >```input_arrays```: **```Placeholder```**                            &nbsp; - &nbsp; input node name (can be found in [Tensorboard](https://www.tensorflow.org/tensorboard), or specified in source codes) <br/>
 >```output_arrays```: **```output_l0```**                             &nbsp; - &nbsp; output node name (can be found in [Tensorboard](https://www.tensorflow.org/tensorboard), or specified in source codes) <br/>
 
@@ -235,7 +250,7 @@ Below we provide an example command:
 tflite_convert \
   --graph_def_file=models/punet_MAI/punet_iteration_100000.pb \
   --output_file=models/punet_MAI/punet_iteration_100000.tflite \
-  --input_shape=1,1488,1984,4 \
+  --input_shape=1,544,960,4 \
   --input_arrays=Placeholder \
   --output_arrays=output_l0
 ```
@@ -259,8 +274,8 @@ We also provide some useful [tools](tools/). Feel free to try them.
 ---
 ### Results
 We evaluate the pre-trained PUNET on the validation data (resolution: 256x256), and obtain the following results:
-* PSNR: **23.08**
-* some visualized comparison with the ground truth:
+* PSNR: **23.03**
+* Some visualized comparison with the ground truth:
 <img src="webpage/PUNET_results_patch.png" alt="PUNET_results_patch" width="60%"/>
 
 
