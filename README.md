@@ -12,7 +12,7 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Dataset and model preparation](#dataset-and-model-preparation)
-- [PUNET architecture](#punet-architecture)
+- [Learned ISP Pipeline](#learned-isp-pipeline)
 - [Training](#training)
   - [Start training](#start-training)
   - [Resume training](#resume-training)
@@ -44,24 +44,33 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 ---
 ### Dataset and model preparation
 
-- Download pre-trained [VGG-19 model](https://polybox.ethz.ch/index.php/s/7z5bHNg5r5a0g7k) <sup>[Mirror](https://drive.google.com/file/d/0BwOLOmqkYj-jMGRwaUR2UjhSNDQ/view?usp=sharing)</sup> and put it into `vgg_pretrained/` folder.
 - Download Mediatek's pre-trained *PUNET* model and put it into `models/original/` folder.
 - Download training data and extract it into `raw_images/train/` folder.    
 - Download validation data and extract it into `raw_images/val/` folder.
 - Download testing data and extract it into `raw_images/test/` folder.    
   <sub>The dataset folder (default name: `raw_images/`) should contain three subfolders: `train/`, `val/` and `test/`. </sub>
-  
   <sub>Please find the download links to above files in **MAI'21 Learned Smartphone ISP Challenge** [website](https://competitions.codalab.org/competitions/28054) (registration needed). </sub>
+
+- [Optional] Download pre-trained [VGG-19 model](https://polybox.ethz.ch/index.php/s/7z5bHNg5r5a0g7k) <sup>[Mirror](https://drive.google.com/file/d/0BwOLOmqkYj-jMGRwaUR2UjhSNDQ/view?usp=sharing)</sup> and put it into `vgg_pretrained/` folder.  
+  <sub>The VGG model is used for one of the loss functions `loss_content` in the baseline, which takes the output of PUNET as the input. You are free to remove that loss (line 65-72 in `train_model.py`). This may affect the result PSNR, but won't affect the whole pipeline.</sub>
 
 [[back]](#contents)
 <br/>
 
 ---
-### PUNET Architecture
+### Learned ISP Pipeline
+
+The whole pipeline of **Learned Smartphone ISP** has two main steps (assume the input resolution is `H x W`):
+1. deBayer pre-processing (in [`load_dataset.py`](load_dataset.py)):
+    * *Input*: RAW data [`H x W x 1`]
+    * *Output*: deBayer RAW data [`(H/2) x (W/2) x 4`]  
+    * You are free to modify the pre-processing method as long as the input & output shapes are kept.
+2. PUNET model (in [`model.py`](model.py)): PUNET is a UNet-like architecture modified from [PyNET](https://github.com/aiff22/PyNET).
+    * *Input*: deBayer RAW data [`(H/2) x (W/2) x 4`]
+    * *Output*: RGB image [`H x W x 3`]
+    * **[Important]** The submitted TFLite model to the [***Learned Smartphone ISP*** Challenge @ MAI 2021](https://competitions.codalab.org/competitions/28054) is required to have the same input & output shapes as PUNET. Please check the [challenge website](https://competitions.codalab.org/competitions/28054) for more details.
 
 <img src="webpage/PUNET.png" alt="PUNET" width="50%"/>
-
-PUNET is a UNet-like architecture modified from [PyNET](https://github.com/aiff22/PyNET).
 
 [[back]](#contents)
 </br>
