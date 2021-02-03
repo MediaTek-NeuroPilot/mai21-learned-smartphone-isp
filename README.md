@@ -35,7 +35,7 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 ### Prerequisites
 
 - Python: numpy, scipy, imageio and pillow packages
-- [TensorFlow 1.15](https://www.tensorflow.org/install/) + [CUDA cuDNN](https://developer.nvidia.com/cudnn)
+- [TensorFlow 1.15.0](https://www.tensorflow.org/install/) + [CUDA cuDNN](https://developer.nvidia.com/cudnn)
 - GPU for training (e.g., Nvidia GeForce GTX 1080)
 
 [[back]](#contents)
