@@ -21,6 +21,7 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
   - [Use the self-obtained model](#use-the-self-obtained-model)
 - [Convert checkpoint to pb](#convert-checkpoint-to-pb)
 - [Convert pb to tflite](#convert-pb-to-tflite)
+- [TFLite inference](#tflite-inference)
 - [[Optional] Some useful tools](#optional-some-useful-tools)
 - [Results](#results)
 - [Folder structure (default)](#folder-structure-default)
@@ -193,22 +194,21 @@ After inference, the output images will be produced under `result_dir`.
 
 Notes: 
 1. to export protobuf (frozen graph), the **output node name** needs to be specified. In this sample code, we use `output_l0` for PUNET. If you use a different name, please modify the argument for the function `utils.export_pb` (Line #111 in `test_model.py`). You can also use [Tensorboard](https://www.tensorflow.org/tensorboard) to check the output node name.
-2. In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you may need to use different models for different evaluation goals (e.g. quality and latency). In this case, please specify different `img_h` and `img_w` for different evaluation goals. <br/>
-    * *Example 1*: Only produce the RGB images from validation data (resolution: *256x256*) without saving the model:
+2. ***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you need to use different models for different evaluation goals (i.e. quality and latency). Therefore, please specify different `img_h` and `img_w` for different evaluation goals. <br/>
+    * *Model 1*: For evaluating PSNR for validation/testing data (resolution: *256x256*):
     ```bash
     CUDA_VISIBLE_DEVICES=0 python test_model.py \
       test_dir=mediatek_raw/ model_dir=models/punet_MAI/ result_dir=results/ \
       arch=punet num_maps_base=16 orig=False restore_iter=98000 \
-      img_h=256 img_w=256 use_gpu=True save=False test_image=True
+      img_h=256 img_w=256 use_gpu=True save=True test_image=True
     ``` 
-    * *Example 2*: Only produce the protobuf (e.g. resolution: *1088x1920*) to evaluate the latency without generating any output images:
+    * *Model 2*: For evaluating the inference latency (resolution: *1088x1920*): (without generating any output images)
     ```bash
     CUDA_VISIBLE_DEVICES=0 python test_model.py \
       model_dir=models/punet_MAI/ \
       arch=punet num_maps_base=16 orig=False restore_iter=98000 \
       img_h=1088 img_w=1920 use_gpu=True save=True test_image=False
     ```
-
 
 [[back]](#contents)
 </br>
@@ -264,11 +264,48 @@ tflite_convert \
   --output_arrays=output_l0
 ```
 
+***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you need to submit **TWO** TFLite models:
+1. *First TFLite* for evaluating PSNR: input shape `[1, 128, 128, 4]` and output shape `[1, 256, 256, 3]`.
+2. *Second TFLite* for evaluating the inference latency: input shape `[1, 544, 960, 4]` and output shape `[1, 1088, 1920, 3]`. 
+
 Feel free to use our provided bash script as well:
 ```bash
 bash pb2tflite.sh
 ```
 <sub>Note: `pb2tflite.sh` converts our provided pretrained model, not exactly the same as the above example commands. </sub>
+
+[[back]](#contents)
+</br>
+
+---
+### TFLite inference
+
+`inference_tflite.py` can load the TFLite model and process a folder of images. The main argument (and default values) are as follows:
+
+>```dataset_dir```: **```raw_images```**  &nbsp; - &nbsp; main folder for input images <br/>
+>```dir_type```: **```test```**,**```val```**  &nbsp; - &nbsp; select validation or testing data <br/>
+>```phone_dir```: **```mediatek_raw```**  &nbsp; - &nbsp; folder for input RAW images <br/>
+>```dslr_dir```: **```None```**  &nbsp; - &nbsp; folder for corresponding ground truth <br/>
+>```model_file```: **```models/original/punet_pretrained_small.tflite```**  &nbsp; - &nbsp; TFLite model <br/>
+>```save_results```:  &nbsp; - &nbsp; save the processed images <br/>
+>```save_dir```: **```results```**  &nbsp; - &nbsp; main folder for output images <br/>
+
+Below we provide an example command:
+
+```bash
+python inference_tflite.py \
+  --dir_type=test --phone_dir=mediatek_raw \
+  --model_file=models/punet_MAI/punet_iteration_100000_input-256.tflite \
+  --save_results --save_dir=results
+```
+
+If ground truth is availavle (e.g. validation data), `inference_tflite.py` can also compute PSNR. Please see the following example (assume we don't want to save output images):
+
+```bash
+python inference_tflite.py \
+  --dir_type=val --phone_dir=mediatek_raw --dslr_dir=fujifilm \
+  --model_file=models/punet_MAI/punet_iteration_100000_input-256.tflite
+```
 
 [[back]](#contents)
 </br>
@@ -294,21 +331,22 @@ We evaluate the pre-trained PUNET on the validation data (resolution: 256x256), 
 ---
 ### Folder structure (default)
 
->```models/```            &nbsp; - &nbsp; logs and models that are saved during the training process <br/>
->```models/original/```   &nbsp; - &nbsp; the folder with the provided pre-trained PUNET model <br/>
->```raw_images/```        &nbsp; - &nbsp; the folder with the dataset <br/>
->```results/```           &nbsp; - &nbsp; visual results for the produced images <br/>
->```vgg-pretrained/```    &nbsp; - &nbsp; the folder with the pre-trained VGG-19 network <br/>
->```tools/```             &nbsp; - &nbsp; [optional] some useful tools <br/>
+>```models/```             &nbsp; - &nbsp; logs and models that are saved during the training process <br/>
+>```models/original/```    &nbsp; - &nbsp; the folder with the provided pre-trained PUNET model <br/>
+>```raw_images/```         &nbsp; - &nbsp; the folder with the dataset <br/>
+>```results/```            &nbsp; - &nbsp; visual results for the produced images <br/>
+>```vgg-pretrained/```     &nbsp; - &nbsp; the folder with the pre-trained VGG-19 network <br/>
+>```tools/```              &nbsp; - &nbsp; [optional] some useful tools <br/>
 
->```load_dataset.py```    &nbsp; - &nbsp; python script that loads training data <br/>
->```model.py```           &nbsp; - &nbsp; PUNET implementation (TensorFlow) <br/>
->```train_model.py```     &nbsp; - &nbsp; implementation of the training procedure <br/>
->```test_model.py```      &nbsp; - &nbsp; applying the trained model to testing images <br/>
->```utils.py```           &nbsp; - &nbsp; auxiliary functions <br/>
->```vgg.py```             &nbsp; - &nbsp; loading the pre-trained vgg-19 network <br/>
->```ckpt2pb.py```         &nbsp; - &nbsp; convert checkpoint to protobuf (frozen graph) <br/>
->```pb2tflite.sh```       &nbsp; - &nbsp; bash script that converts protobuf to tflite <br/>
+>```load_dataset.py```     &nbsp; - &nbsp; python script that loads training data <br/>
+>```model.py```            &nbsp; - &nbsp; PUNET implementation (TensorFlow) <br/>
+>```train_model.py```      &nbsp; - &nbsp; implementation of the training procedure <br/>
+>```test_model.py```       &nbsp; - &nbsp; applying the trained model to testing images <br/>
+>```utils.py```            &nbsp; - &nbsp; auxiliary functions <br/>
+>```vgg.py```              &nbsp; - &nbsp; loading the pre-trained vgg-19 network <br/>
+>```ckpt2pb.py```          &nbsp; - &nbsp; convert checkpoint to protobuf (frozen graph) <br/>
+>```pb2tflite.sh```        &nbsp; - &nbsp; bash script that converts protobuf to tflite <br/>
+>```inference_tflite.py``` &nbsp; - &nbsp; load TFLite model and process images <br/>
 
 [[back]](#contents)
 <br/>
