@@ -194,15 +194,15 @@ After inference, the output images will be produced under `result_dir`.
 
 Notes: 
 1. to export protobuf (frozen graph), the **output node name** needs to be specified. In this sample code, we use `output_l0` for PUNET. If you use a different name, please modify the argument for the function `utils.export_pb` (Line #111 in `test_model.py`). You can also use [Tensorboard](https://www.tensorflow.org/tensorboard) to check the output node name.
-2. ***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you need to use different models for different evaluation goals (i.e. quality and latency). Therefore, please specify different `img_h` and `img_w` for different evaluation goals. <br/>
-    * *Model 1*: For evaluating PSNR for validation/testing data (resolution: *256x256*):
+2. ***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you may need to use different models for different evaluation goals (i.e. quality and latency). Therefore, please specify different `img_h` and `img_w` for different evaluation goals. <br/>
+    * *Example 1*: For evaluating PSNR for validation data (resolution: *256x256*) and generating processed images:
     ```bash
     CUDA_VISIBLE_DEVICES=0 python test_model.py \
       test_dir=mediatek_raw/ model_dir=models/punet_MAI/ result_dir=results/ \
       arch=punet num_maps_base=16 orig=False restore_iter=98000 \
       img_h=256 img_w=256 use_gpu=True save=True test_image=True
     ``` 
-    * *Model 2*: For evaluating the inference latency (resolution: *1088x1920*): (without generating any output images)
+    * *Example 2*: For evaluating the inference latency (resolution: *1088x1920*) without generating any output images:
     ```bash
     CUDA_VISIBLE_DEVICES=0 python test_model.py \
       model_dir=models/punet_MAI/ \
@@ -264,9 +264,9 @@ tflite_convert \
   --output_arrays=output_l0
 ```
 
-***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), you need to submit **TWO** TFLite models:
-1. *First TFLite* for evaluating PSNR: input shape `[1, 128, 128, 4]` and output shape `[1, 256, 256, 3]`.
-2. *Second TFLite* for evaluating the inference latency: input shape `[1, 544, 960, 4]` and output shape `[1, 1088, 1920, 3]`. 
+***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), participants are required to submit **TWO** TFLite models:
+1. *model_none.tflite* for evaluating the image quality: input shape `[1, None, None, 4]` and output shape `[1, None, None, 3]`.
+2. *model.tflite* for evaluating the inference latency: input shape `[1, 544, 960, 4]` and output shape `[1, 1088, 1920, 3]`. 
 
 Feel free to use our provided bash script as well:
 ```bash
@@ -299,13 +299,16 @@ python inference_tflite.py \
   --save_results --save_dir=results
 ```
 
-If ground truth is availavle (e.g. validation data), `inference_tflite.py` can also compute PSNR. Please see the following example (assume we don't want to save output images):
+If ground truth is available (e.g. validation data), `inference_tflite.py` can also compute PSNR. Please see the following example (assume we don't want to save output images):
 
 ```bash
 python inference_tflite.py \
   --dir_type=val --phone_dir=mediatek_raw --dslr_dir=fujifilm \
   --model_file=models/punet_MAI/punet_iteration_100000_input-256.tflite
 ```
+
+**[Important]** The main goal of `inference_tflite.py` is to introduce an additional sanity check for the submitted solution. However, it will NOT be used for the final evaluation of the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/). Therefore, it would be better to add `inference_tflite.py` to the final submission, but NOT mandatory.<br>
+`inference_tflite.py` contains some pre-processing techniques, which will NOT be included in the final evaluation script for the Challenge. Therefore, all the processing should be integrated into the required TFLite models. 
 
 [[back]](#contents)
 </br>
