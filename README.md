@@ -265,8 +265,8 @@ tflite_convert \
 ```
 
 ***[Important]*** In the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/), participants are required to submit **TWO** TFLite models:
-1. *model_none.tflite* for evaluating the image quality: input shape `[1, None, None, 4]` and output shape `[1, None, None, 3]`.
-2. *model.tflite* for evaluating the inference latency: input shape `[1, 544, 960, 4]` and output shape `[1, 1088, 1920, 3]`. 
+1. `model_none.tflite` (for evaluating the image quality): input shape `[1, None, None, 4]` and output shape `[1, None, None, 3]`.
+2. `model.tflite` (for evaluating the inference latency): input shape `[1, 544, 960, 4]` and output shape `[1, 1088, 1920, 3]`. 
 
 Feel free to use our provided bash script as well:
 ```bash
