@@ -4,7 +4,7 @@
 
 ## Overview 
 
-[**[Challenge Website]**](https://competitions.codalab.org/competitions/28054) [**[Workshop Website]**](http://ai-benchmark.com/workshops/mai/2021/)
+[**[Challenge Report Paper]**](https://arxiv.org/abs/2105.07809) [**[Challenge Website]**](https://competitions.codalab.org/competitions/28054) [**[Workshop Website]**](http://ai-benchmark.com/workshops/mai/2021/)
 
 This repository provides the implementation of the baseline model, **PUNET**, for the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/). The model is trained to convert **RAW Bayer data** obtained directly from mobile camera sensor into photos captured with a professional *Fujifilm DSLR* camera, thus replacing the entire hand-crafted ISP camera pipeline. The provided pre-trained PUNET model can be used to generate full-resolution **12MP photos** from RAW image files captured using the *Sony IMX586* camera sensor. PUNET is a UNet-like architecture modified from PyNET and serve as an extension to the [PyNET](https://github.com/aiff22/PyNET) project.
 
