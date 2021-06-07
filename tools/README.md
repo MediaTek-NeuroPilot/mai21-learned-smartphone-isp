@@ -40,3 +40,10 @@ python edit_suffix.py ../results/punet_MAI/ ../results/punet_MAI_upload/ "-punet
 * 2nd argument: output directory
 * 3rd argument: the suffix to be removed
 * 4th argument: the suffix to be added
+
+<br/>
+
+### 4. Example Jupyter Notebook (Unofficial)
+
+Unofficial Jupyter Notebook [Learned_Smartphone_ISP_Baseline.ipynb](Learned_Smartphone_ISP_Baseline.ipynb) provided by [sayakpaul](https://github.com/sayakpaul). Feel free to check it!
+
