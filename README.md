@@ -22,7 +22,7 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 - [Convert checkpoint to pb](#convert-checkpoint-to-pb)
 - [Convert pb to tflite](#convert-pb-to-tflite)
 - [TFLite inference](#tflite-inference)
-  - [Desktop/Laptop](#desktop-laptop)
+  - [Desktop/Laptop](#desktoplaptop)
   - [Mobile](#mobile)
 - [[Optional] Some useful tools](#optional-some-useful-tools)
 - [Results](#results)
