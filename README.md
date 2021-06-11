@@ -22,6 +22,8 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 - [Convert checkpoint to pb](#convert-checkpoint-to-pb)
 - [Convert pb to tflite](#convert-pb-to-tflite)
 - [TFLite inference](#tflite-inference)
+  - [Desktop/Laptop](#desktop-laptop)
+  - [Mobile](#mobile)
 - [[Optional] Some useful tools](#optional-some-useful-tools)
 - [Results](#results)
 - [Folder structure (default)](#folder-structure-default)
@@ -280,6 +282,7 @@ bash pb2tflite.sh
 ---
 ### TFLite inference
 
+#### Desktop/Laptop
 `inference_tflite.py` can load the TFLite model and process a folder of images. The main argument (and default values) are as follows:
 
 >```dataset_dir```: **```raw_images```**  &nbsp; - &nbsp; main folder for input images <br/>
@@ -309,6 +312,11 @@ python inference_tflite.py \
 
 **[Important]** The main goal of `inference_tflite.py` is to introduce an additional sanity check for the submitted solution. However, it will NOT be used for the final evaluation of the [***Learned Smartphone ISP*** Challenge](https://competitions.codalab.org/competitions/28054) in [*Mobile AI (MAI) Workshop @ CVPR 2021*](http://ai-benchmark.com/workshops/mai/2021/). Therefore, it would be better to add `inference_tflite.py` to the final submission, but NOT mandatory.<br>
 `inference_tflite.py` contains some pre-processing techniques, which will NOT be included in the final evaluation script for the Challenge. Therefore, all the processing should be integrated into the required TFLite models. 
+
+#### Mobile
+We provide two ways to evaluate the mobile performance of your TFLite models:
+* [AI benchmark](https://ai-benchmark.com/): An app allowing you to load your model and run it locally on your own Android devices with various acceleration options (e.g. CPU, GPU, APU, etc.).
+* [TFLite Neuron Delegate](https://github.com/MediaTek-NeuroPilot/tflite-neuron-delegate): You can build MediaTek's neuron delegate runner by yourself.
 
 [[back]](#contents)
 </br>
