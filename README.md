@@ -392,10 +392,10 @@ This project is an extension of the [PyNET](https://github.com/aiff22/PyNET) pro
 
 If you find this repository useful, please cite our MAI'21 work:
 ```
-@article{ignatov2021learned,
+@inproceedings{ignatov2021learned,
   title={Learned Smartphone ISP on Mobile NPUs with Deep Learning, Mobile AI 2021 Challenge: Report},
   author={Ignatov, Andrey and Chiang, Cheng-Ming and Kuo, Hsien-Kai and Sycheva, Anastasia and Timofte, Radu and Chen, Min-Hung and Lee, Man-Yu and Xu, Yu-Syuan and Tseng, Yu and Xu, Shusong and Guo, Jin and Chen, Chao-Hung and Hsyu, Ming-Chun and Tsai, Wen-Chia and Chen, Chao-Wei and Malivenko, Grigory and Kwon, Minsu and Lee, Myungje and Yoo, Jaeyoon and Kang, Changbeom and Wang, Shinjo and Shaolong, Zheng and Dejun, Hao and Fen, Xie and Zhuang, Feng and Ma, Yipeng and Peng, Jingyang and Wang, Tao and Song, Fenglong and Hsu, Chih-Chung and Chen, Kwan-Lin and Wu, Mei-Hsuang and Chudasama, Vishal and Prajapati, Kalpesh and Patel, Heena and Sarvaiya, Anjali and Upla, Kishor and Raja, Kiran and Ramachandra, Raghavendra and Busch, Christoph and de Stoutz, Etienne},
-  journal={CVPR Workshop and Challenges on Mobile AI},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops (Mobile AI)},
   year={2021},
   url={https://arxiv.org/abs/2105.07809}
 }
