@@ -32,7 +32,6 @@ This repository provides the implementation of the baseline model, **PUNET**, fo
 - [Acknowledge](#acknowledge)
 - [Citation](#citation)
 - [License](#license)
-- [Contact](#contact)
 
 ---
 ### Prerequisites
@@ -416,14 +415,6 @@ If you find this repository useful, please cite our MAI'21 work:
 PyNet License: [PyNet License](https://github.com/aiff22/PyNET/blob/master/LICENSE.md)  
 Mediatek License: [Mediatek Apache License 2.0](LICENSE)
 
-[[back]](#contents)
-<br/>
-
----
-### Contact
-
-Please contact [**Min-Hung Chen**](https://scholar.google.com/citations?user=ovzuxi8AAAAJ) for more information. <br/>
-Email: mh.chen AT mediatek DOT com <br/>
 [<img align="center" src="webpage/logo_MTK.png" width="10%">](https://www.mediatek.com/)
 
 [[back]](#contents)
